@@ -32,3 +32,40 @@
 - 仅支持 Windows
 - 登录态保存在 chrome-profile，删除后需重新登录
 - 批量节奏约每单 30-60 秒（含验证码识别），请勿中途关 Chrome 窗口
+
+---
+
+# EMS Batch Tracking Skill (ems-batch)
+
+Batch-query China Post EMS waybill numbers, export a tracking PDF per waybill, and generate a 3-column summary sheet (waybill / query succeeded / file saved).
+
+## Installation
+1. Unzip/copy the `ems-batch` folder into DSH's skills directory:
+   - Windows: `C:\Users\<your-username>\.dsh\skills\ems-batch\`
+2. Make sure desktop Google Chrome is installed
+3. Restart DSH (or start a new session) — the skill is then active
+
+## Usage
+Tell DSH: **"Query EMS waybills, photos are in D:\xxx"** (or paste a waybill list / txt file path).
+
+- First run: a Chrome window pops up — **log in to EMS manually as prompted** (enter your own credentials); the batch continues automatically after login
+- The Chrome window stays visible during the run (the site's WAF requires a visible browser — normal)
+- Output: one `<waybill>.pdf` per waybill + `EMS查询汇总.xlsx` (summary) in the output directory
+
+## Waybill sources
+- **Photo directory**: one waybill per photo (reads the small digits under the barcode, usually 13 digits)
+- **txt list**: one waybill per line
+- **Pasted directly**: waybills in the chat message
+
+## Optional configuration (environment variables)
+| Variable | Default | Description |
+|---|---|---|
+| `EMS_CHROME` | auto-detect | Path to Chrome executable |
+| `EMS_CHROME_PROFILE` | `%USERPROFILE%\.ems-batch\chrome-profile` | Chrome profile (stores login session — do not delete) |
+| `EMS_BATCH_TMP` | `%USERPROFILE%\.ems-batch\tmp` | Temp file directory |
+| `EMS_CDP_PORT` | 9338 | CDP debugging port |
+
+## Notes
+- Windows only
+- Login session is stored in chrome-profile; deleting it requires re-login
+- Batch pace is roughly 30-60 s per waybill (including captcha solving); do not close the Chrome window mid-run
